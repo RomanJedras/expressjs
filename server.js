@@ -17,7 +17,6 @@ app.get('/userform', function (req, res) {
 		last_name: req.query.last_name
 	};
 	res.json(response);
-	
 });
 
 const server = app.listen(3000, 'localhost', function() {
