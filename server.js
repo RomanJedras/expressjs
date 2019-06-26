@@ -2,44 +2,29 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
-let stringifyFile = null;
+
+app.use(express.static('assets'));
 
 
-app.use(bodyParser.json());
-
-
-app.get('/getNote', function(req, res) {
-	fs.readFile('./test.json', 'utf8', function(err, data) {
-		
-		if (err) throw err;
-		stringifyFile = data;
-		res.send(`
-       ${JSON.stringify(data, null, 4)}
-    `);
-	});
+app.get('/', function (req, res) {
+	res.sendFile('/index.html')
 });
 
-
-app.post('/updateNote/:note', function(req, res) {
-	stringifyFile = JSON.stringify(req.params.note, null, 4) ;
+app.get('/userform', function (req, res) {
 	
-	fs.writeFile('./test.json', stringifyFile, function(err) {
-		if (err) throw err;
-		console.log('file updated');
-		res.send(stringifyFile);
-	});
+	const response = {
+		first_name: req.query.first_name,
+		last_name: req.query.last_name
+	};
+	res.json(response);
 	
 });
 
-
-app.use(function (req, res, next) {
-	res.removeHeader('X-Powered-By');
-	next();
-	res.locals.data= 'Dane dodane wczesniej'
-	res.status(404).send('Wybacz, nie mogliśmy odnaleźć tego, czego żądasz!')
+const server = app.listen(3000, 'localhost', function() {
+	const host = server.address().address;
+	const port = server.address().port;
+	
+	console.log('Przykładowa aplikacja nasłuchuje na http://' + host + ':' + port);
 });
-
-
-app.listen(3000);
 
 
