@@ -22,14 +22,20 @@ app.get('/getNote', function(req, res) {
 
 app.post('/updateNote/:note', function(req, res) {
 	stringifyFile = JSON.stringify(req.params.note, null, 4) ;
-    const textIn = fs.readFileSync('./test.json','utf-8');
-	stringifyFile += os.EOL + textIn + os.EOL + ` Craeted on ${Date.now()}`;
-	fs.writeFile('./test.json', stringifyFile, function(err) {
-		if (err) throw err;
-		console.log('file updated');
-		res.send(stringifyFile);
-	});
-	
+     fs.readFile('./test.json', 'utf8', (error,data)=>{
+	     if (error) throw error;
+	     stringifyFile += os.EOL + data + os.EOL + ` Craeted on ${Date.now()}`;
+     	fs.writeFile('./test.json',stringifyFile,(error, data)=>{
+	        if (error) throw error;
+	        fs.readFile('./menu.json', 'utf8', (error,data)=>{
+		        stringifyFile += os.EOL + data +` Craeted on ${Date.now()}`;
+		        fs.writeFile('./final.json',stringifyFile,error =>{
+			        if (error) throw error;
+		        })
+	        })
+     		res.send(stringifyFile);
+        })
+     });
 });
 
 
