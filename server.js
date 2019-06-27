@@ -29,7 +29,7 @@ app.post('/updateNote/:note', function(req, res) {
 	        if (error) throw error;
 	        fs.readFile('./menu.json', 'utf8', (error,data)=>{
 		        stringifyFile += os.EOL + data +` Craeted on ${Date.now()}`;
-		        fs.writeFile('./final.json',stringifyFile,error =>{
+		        fs.writeFile('./log.json',stringifyFile,error =>{
 			        if (error) throw error;
 		        })
 	        })
