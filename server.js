@@ -1,52 +1,32 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+const http = require('http');
 const os = require("os");
 const fs = require('fs');
-const app = express();
-let stringifyFile = null;
+const url = require('url');
 
 
-app.use(bodyParser.json());
+const server = http.createServer((req,res) => {
+	const pathName = req.url;
+	
+	if (pathName === '/' || pathName === '/updateNote/test') {
+		res.writeHead('200', {
+			'Content-type': 'text/html',
+			'my-own-header': 'json-code'
+		});
+		res.end('<h1>Hello from server with path updateNote</h1>')
+		
+	} else {
+		res.writeHead('404',{
+			'Content-type': 'text/html',
+			'my-own-header': 'hello-world'
+		});
+		res.end("<h1>404: Page not found</h1>")
+	}
+	
+	
+})
 
-
-app.get('/getNote', function(req, res) {
-	fs.readFile('./test.json', 'utf8', function(err, data) {
-		if (err) throw err;
-		stringifyFile = data;
-		res.send(`
-       ${JSON.stringify(data, null, 4)}
-    `);
-	});
+server.listen('3000','127.0.0.1',()=>{
+	console.log('Listening to request on port 3000')
 });
-
-
-app.post('/updateNote/:note', function(req, res) {
-	stringifyFile = JSON.stringify(req.params.note, null, 4) ;
-     fs.readFile('./test.json', 'utf8', (error,data)=>{
-	     if (error) throw error;
-	     stringifyFile += os.EOL + data + os.EOL + ` Craeted on ${Date.now()}`;
-     	fs.writeFile('./test.json',stringifyFile,(error, data)=>{
-	        if (error) throw error;
-	        fs.readFile('./menu.json', 'utf8', (error,data)=>{
-		        stringifyFile += os.EOL + data +` Craeted on ${Date.now()}`;
-		        fs.writeFile('./log.json',stringifyFile,error =>{
-			        if (error) throw error;
-		        })
-	        })
-     		res.send(stringifyFile);
-        })
-     });
-});
-
-
-app.use(function (req, res, next) {
-	res.removeHeader('X-Powered-By');
-	next();
-	res.locals.data= 'Dane dodane wczesniej'
-	res.status(404).send('Wybacz, nie mogliśmy odnaleźć tego, czego żądasz!')
-});
-
-
-app.listen(3000);
 
 
