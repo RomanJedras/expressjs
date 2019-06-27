@@ -23,7 +23,7 @@ app.get('/getNote', function(req, res) {
 app.post('/updateNote/:note', function(req, res) {
 	stringifyFile = JSON.stringify(req.params.note, null, 4) ;
     const textIn = fs.readFileSync('./test.json','utf-8');
-	stringifyFile += os.EOL + textIn;
+	stringifyFile += os.EOL + textIn + os.EOL + ` Craeted on ${Date.now()}`;
 	fs.writeFile('./test.json', stringifyFile, function(err) {
 		if (err) throw err;
 		console.log('file updated');
