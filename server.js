@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const os = require("os");
 const fs = require('fs');
 const app = express();
 let stringifyFile = null;
@@ -10,7 +11,6 @@ app.use(bodyParser.json());
 
 app.get('/getNote', function(req, res) {
 	fs.readFile('./test.json', 'utf8', function(err, data) {
-		
 		if (err) throw err;
 		stringifyFile = data;
 		res.send(`
@@ -22,7 +22,8 @@ app.get('/getNote', function(req, res) {
 
 app.post('/updateNote/:note', function(req, res) {
 	stringifyFile = JSON.stringify(req.params.note, null, 4) ;
-	
+    const textIn = fs.readFileSync('./test.json','utf-8');
+	stringifyFile += os.EOL + textIn;
 	fs.writeFile('./test.json', stringifyFile, function(err) {
 		if (err) throw err;
 		console.log('file updated');
