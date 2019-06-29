@@ -1,0 +1,3 @@
+{
+  "presets": ["env","latest","stage-2"]
+}
