@@ -3,17 +3,32 @@
 var fs = require('fs');
 var superagent = require('superagent');
 
-fs.readFile(__dirname + '/dog.txt', function (err, data) {
-	console.log(' Bread: ' + data);
-
-	superagent('get', 'https://dog.ceo/api/breeds/image/random').then(function (res) {
-		console.log(res.body.message);
-		fs.writeFile('dog-image.txt', res.body.message, function (err) {
-			if (err) return console.log(err.message);
-
-			console.log('Random save image file');
+var readFilePro = function readFilePro(file) {
+	return new Promise(function (res, rej) {
+		fs.readFile(file, function (err, data) {
+			if (err) rej('I could not find that file');
+			console.log(res(data));
 		});
-	}).catch(function (err) {
-		console.log(err.message);
 	});
+};
+
+var writeFilePro = function writeFilePro(file, data) {
+	return new Promise(function (resolve, reject) {
+		fs.writeFile(file, data, function (err) {
+			if (err) reject('Could not write file 😢');
+			resolve('success');
+		});
+	});
+};
+
+readFilePro(__dirname + '/dog.txt').then(function (data) {
+	console.log(' Bread: ' + data);
+	return superagent.get('https://dog.ceo/api/breed/' + data + '/images/random');
+}).then(function (res) {
+	console.log(res.body.message);
+	return writeFilePro('dog-image.txt', res.body.message);
+}).then(function () {
+	console.log('Random dog image saved to file!');
+}).catch(function (err) {
+	console.log(err.message);
 });
